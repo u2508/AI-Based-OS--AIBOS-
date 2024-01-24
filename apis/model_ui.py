@@ -1,7 +1,8 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QLineEdit, QPushButton, QTextEdit, QComboBox
-from PyQt5.QtGui import QFont
-from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPixmap, QImage,QFont
+from PyQt5.QtNetwork import QNetworkAccessManager, QNetworkRequest
+from PyQt5.QtCore import QUrl, QByteArray, Qt
 import multiprocessing
 
 class NewsApp(QWidget):
@@ -42,7 +43,7 @@ class NewsApp(QWidget):
                                              "QComboBox::drop-down-menu { background-color: green; }"
                                       "QComboBox:hover { background-color: lightcyan; border-radius: 15px; }")
         self.category_combobox.move(300, 75)
-        self.category_combobox.addItems(['llm', 'llama', 'Opengpt', 'Google_Summarizer', 'Science', 'Technology'])
+        self.category_combobox.addItems([ 'llama', 'llm','Opengpt','chat_with_ai', "text_to_img"])
 
         # Article display
         self.article_label = QLabel('results:', self)
@@ -51,11 +52,16 @@ class NewsApp(QWidget):
 
         self.article_textbox = QTextEdit(self)
         self.article_textbox.setFont(QFont('Arial', 14))
-        self.article_textbox.setReadOnly(True)
         self.article_textbox.move(50, 170)
         self.article_textbox.resize(700, 300)
         self.article_textbox.setStyleSheet("background-color: green;")
-        
+        self.article_img = QLabel(self)
+        self.article_img.move(50, 170)
+        self.article_img.resize(700, 300)
+        self.article_img.setStyleSheet("background-color: yellow;")
+        self.article_img.hide()
+        self.article_img.setAlignment(Qt.AlignCenter)
+        self.article_textbox.setReadOnly(True)
         # Fetch button
         self.fetch_button = QPushButton('Fetch results', self)
         self.fetch_button.setFont(QFont('Arial', 18))
@@ -76,6 +82,12 @@ class NewsApp(QWidget):
         self.speech_button.move(600, 500)
         self.speech_button.setStyleSheet("background-color: blue;")
         self.speech_button.clicked.connect(self.speak_article)
+        self.down_button = QPushButton('download', self)
+        self.down_button.setFont(QFont('Arial', 18))
+        self.down_button.move(600, 500)
+        self.down_button.setStyleSheet("background-color: blue;")
+        self.down_button.clicked.connect(self.speak_article)
+        self.down_button.hide()
 
     def hide_article(self):
         self.call()
@@ -94,14 +106,46 @@ class NewsApp(QWidget):
         input = self.country_textbox.text().strip()
         input_category = self.category_combobox.currentText()
         func=getattr(model,input_category)
+        self.article_textbox.setText("wait compiling output")
+        
         Headlines = func(input)
 
-        self.article_textbox.clear()
         if Headlines:
-            self.article_textbox.append(Headlines)
+            if input_category=="text_to_img":
+                self.load_image_from_url(Headlines[0])
+            else:    
+                self.article_textbox.clear()
+                self.article_textbox.append(Headlines)
         else:
+            self.article_textbox.clear()
             self.article_textbox.append(
                 f"Sorry no output found, Something Wrong!!!")
+    def load_image_from_url(self, url):
+        manager = QNetworkAccessManager(self)
+        request = QNetworkRequest(QUrl(url))
+        print(url)
+        manager.finished.connect(self.image_loaded)
+        manager.get(request)
+
+    def image_loaded(self, reply):
+        try:
+            image_data = reply.readAll()
+            image = QImage.fromData(QByteArray(image_data))
+            
+            # Resize the image to fit within the QLabel
+            scaled_image = image.scaled(self.article_img.size(),Qt.KeepAspectRatio,Qt.SmoothTransformation)
+
+            pixmap = QPixmap.fromImage(scaled_image)
+            self.show_image(pixmap)
+        except Exception as e:
+            print("Error loading image:",str(e) )
+
+    def show_image(self, image_path):
+        self.article_img.setPixmap(image_path)
+        self.article_img.show()
+        self.article_textbox.hide()
+        self.speech_button.hide()
+        self.down_button.show()
     def call(self):
         if self.isHidden()==True:
             self.show()

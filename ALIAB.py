@@ -148,6 +148,12 @@ class VoiceBotGUI(QMainWindow):
         self.stop_button.setStyleSheet("background-color: red; color: white; border: none;")
         self.stop_button.setDisabled(True)
         self.stop_button.clicked.connect(self.stop_voice_interaction)
+        #godmod.exe
+        self.settings_button = QPushButton("Chat Notes",self)
+        self.settings_button.setGeometry(500, 120, 340, 80)
+        self.settings_button.setFont(QFont("Helvetica", 42))
+        self.settings_button.setStyleSheet("background-color: red; color: white; border: none;")
+        self.settings_button.clicked.connect(self.open_settings)
         # Create a text area for interaction history
         self.history_text = QFrame(self)
         self.history_text.setGeometry(950, 80, 350, 650)
