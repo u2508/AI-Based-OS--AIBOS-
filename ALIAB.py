@@ -1,6 +1,6 @@
 import sys,json,os
 import apis.spotlight_search as Spotlight,apis.news as news,apis.weather as weather
-import apis.appLOOK as applook,apis.heathbot as healthgpt,apis.model_ui as edugpt
+import apis.appLOOK as applook,apis.heathbot as healthgpt,apis.model_ui as edugpt,apis.notepad as notes
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QFont, QPixmap
 from PyQt5.QtWidgets import *
@@ -23,8 +23,9 @@ class SettingsDialog(QDialog):
         super().__init__()
         self.ai = ai
         self.setWindowTitle("Settings")
-        self.setGeometry(300, 300, 400, 150)
+        self.setGeometry(430, 220, 500, 300)
         self.init_ui()
+        self.setStyleSheet("background-color: blue; color: white; border: 15px; padding:8px ")
         
 
     def init_ui(self):
@@ -35,16 +36,17 @@ class SettingsDialog(QDialog):
         # Create a group box for temperature settings
         temperature_group_box = QGroupBox("Temperature Settings")
         temperature_layout = QFormLayout()
-
         # Label and input field for adjusting temperature
         temperature_label = QLabel("AI Temperature:")
         self.temperature_input = QLineEdit()
+        self.temperature_input.setStyleSheet("background-color: red; color: white; border: none;")
         self.temperature_input.setText(str(self.ai.gpt3_temperature))
 
         # Slider for adjusting temperature
         temperature_slider = QSlider(Qt.Horizontal)
         temperature_slider.setMinimum(0)
         temperature_slider.setMaximum(100)
+        
         temperature_slider.setValue(int(self.ai.gpt3_temperature * 100))
         temperature_slider.valueChanged.connect(self.update_temperature_input)
 
@@ -61,7 +63,7 @@ class SettingsDialog(QDialog):
         # Add the temperature group box and save button to the main layout
         layout.addWidget(temperature_group_box)
         layout.addWidget(save_button)
-        layout.setAlignment(Qt.AlignTop)  # Align the top of the layout
+        layout.setAlignment(Qt.AlignCenter)  # Align the center of the layout
 
         self.setLayout(layout)
     def update_temperature_input(self, value):
@@ -92,6 +94,7 @@ class VoiceBotGUI(QMainWindow):
         self.health=healthgpt.DiseasePredictionApp()
         self.applook=applook.AppSearchApp()
         self.education=edugpt.NewsApp()
+        self.notes=notes.MainWindow()
         self.interaction_history = ['\n\n',]
         self.init_ui()
         self.count=0
@@ -106,7 +109,7 @@ class VoiceBotGUI(QMainWindow):
     def settext(self):
         self.gettext()
         history_text = "\n".join(self.interaction_history)
-        self.history_text.setPlainText(history_text)
+        #self.history_text.setPlainText(history_text)
     def init_ui(self):
         label = QLabel(self)
         if getattr(sys, 'frozen', False):
@@ -149,11 +152,11 @@ class VoiceBotGUI(QMainWindow):
         self.stop_button.setDisabled(True)
         self.stop_button.clicked.connect(self.stop_voice_interaction)
         #godmod.exe
-        self.settings_button = QPushButton("Chat Notes",self)
-        self.settings_button.setGeometry(500, 120, 340, 80)
-        self.settings_button.setFont(QFont("Helvetica", 42))
-        self.settings_button.setStyleSheet("background-color: red; color: white; border: none;")
-        self.settings_button.clicked.connect(self.open_settings)
+        self.setting_button = QPushButton("Settings for Models",self)
+        self.setting_button.setGeometry(430, 120, 480, 80)
+        self.setting_button.setFont(QFont("Helvetica", 42))
+        self.setting_button.setStyleSheet("background-color: red; color: white; border: none;")
+        self.setting_button.clicked.connect(self.open_settings)
         # Create a text area for interaction history
         self.history_text = QFrame(self)
         self.history_text.setGeometry(950, 80, 350, 650)
@@ -172,11 +175,11 @@ class VoiceBotGUI(QMainWindow):
         self.options.setStyleSheet("color: red;background-color: rgba(0, 0, 0, 00);")
         self.options.setGeometry(15, 10, 300, 80)
         # Create a settings button
-        self.settings_button = QPushButton("Settings",settings_frame)
-        self.settings_button.setGeometry(50, 120, 240, 80)
-        self.settings_button.setFont(QFont("Helvetica", 32))
-        self.settings_button.setStyleSheet("background-color: orange; color: white; border: none;")
-        self.settings_button.clicked.connect(self.open_settings)
+        self.notes_button = QPushButton("Chat Notes",settings_frame)
+        self.notes_button.setGeometry(50, 120, 240, 80)
+        self.notes_button.setFont(QFont("Helvetica", 32))
+        self.notes_button.setStyleSheet("background-color: orange; color: white; border: none;")
+        self.notes_button.clicked.connect(self.show_notes)
         self.keyboard_button = QPushButton("Keyboard \nChat",settings_frame)
         self.keyboard_button.setGeometry(50, 240, 240, 140)
         self.keyboard_button.setFont(QFont("Helvetica", 32))
@@ -224,13 +227,15 @@ class VoiceBotGUI(QMainWindow):
         self.education.call()
     def SP_Search(self):
         Spotlight.exec(api)
+    def show_notes(self):
+        self.notes.call()
     def show_weather(self):
         self.weather.weather()
     def show_news(self):
         self.news.news()
     def open_settings(self):
         settings_dialog = SettingsDialog(self.voice_handler)
-        settings_dialog.exec_()
+        settings_dialog.exec()
     def on_exit_button_click(self):
         self.stop_voice_interaction()
         exit()
