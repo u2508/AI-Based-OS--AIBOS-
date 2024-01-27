@@ -14,7 +14,7 @@
 ■ Python 3.x
 ■ PyQt5 Module
 ■ OpenAi Module
-■ Voice Recognition
+■ Voice Recognition\n
 for requirements install requirement.txt using pip
 # Code Name:ALIAB
 # version:1.0 
