@@ -22,7 +22,9 @@
 
 ■ Voice Recognition
 
-for requirements install requirement.txt using pip
+### for requirements install requirement.txt using pip
+    pip install -r requirements.txt
+
 # Code Name:ALIAB
 ## version:1.0 
 The Core structure ALIAB based on gpt3.5
