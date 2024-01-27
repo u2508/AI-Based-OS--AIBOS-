@@ -54,6 +54,9 @@ class MainWindow(QMainWindow):
         self.create_action(file_toolbar, "Save", self.file_save)
         self.create_action(file_toolbar, "Save As", self.file_saveas)
         self.create_action(file_toolbar, "Print", self.file_print)
+        self.create_action(file_toolbar, "Close file", self.file_close)
+        self.create_action(file_toolbar, "Close APP", self.call)
+        
         
 
         # Edit Actions
@@ -102,7 +105,13 @@ class MainWindow(QMainWindow):
                 self.editor.setPlainText(text)
                 self.update_title()
                 self.status.showMessage(f"Opened: {path}")
-
+    def file_close(self,path=None):
+        if path:
+            self.editor.setPlainText("")
+            self.status.showMessage(f"Closed: {path}")
+        else:
+            self.editor.setPlainText("")
+            self.status.showMessage(f"NO File Opened: Error")
     def file_save(self):
         if self.path is None:
             return self.file_saveas()
