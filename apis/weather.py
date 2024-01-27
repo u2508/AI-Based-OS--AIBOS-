@@ -36,6 +36,7 @@ class WeatherApp(QWidget):
 
         self.weather_textbox = QTextEdit(self)
         self.weather_textbox.setFont(QFont('Arial', 14))
+        self.weather_textbox.setStyleSheet("background-color: green;")
         self.weather_textbox.move(50, 120)
         self.weather_textbox.resize(700, 300)
         self.weather_textbox.setReadOnly(True)
