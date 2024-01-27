@@ -27,8 +27,38 @@ for requirements install requirement.txt using pip
 ## version:1.0 
 The Core structure ALIAB based on gpt3.5
 ## version:2.0
-Addition of :-
-exit
-Ai Temperature Settings
-keyboard chat
+### Addition Of :-
+
+    Exit
+
+    Ai Temperature Settings
+
+    Keyboard chat
+
+    Chat History
 ## version:3.0
+Cleaning up the UI a bit
+### Addition Of :-
+
+    Chat Notes
+
+    APP Lookup
+
+## version:4.0
+### Addition Of :-
+    News
+
+    Weather
+### depreciation Of :-
+    Chat History
+### Changing up the UI :-
+Restructuring the UI to accommodate the changes in code
+
+## version:5.0
+### Addition of :-
+#### HealthGPT
+    Disease prediction from Symptoms
+#### EduGPT
+    Multi model Research tool with text to image generation 
+### Changing up the UI :-
+Restructuring the button placement in UI to accommodate the changes in code and make the UI appealing
