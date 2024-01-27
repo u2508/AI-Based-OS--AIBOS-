@@ -23,7 +23,7 @@
 ■ Voice Recognition
 
 ### for requirements install requirement.txt using pip
-    pip install -r requirements.txt
+    pip install -r requirement.txt
 
 # Code Name:ALIAB
 ## version:1.0 
