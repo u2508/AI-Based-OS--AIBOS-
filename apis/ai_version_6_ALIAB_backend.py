@@ -11,6 +11,17 @@ class VoiceInteractionHandler:
         self.api_key = api
         self.load_knowledge_base()
         self.gpt3_temperature = 0.7
+        self.voice_id="HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
+        self.speed=125
+    def intro(self):        
+        
+        self.callback_process = multiprocessing.Process(target=self.introduce)    
+        self.callback_process.start()
+            
+    def introduce(self):     
+        Speech("Hello! I AM ALIAB which stands for Ai with learning intelligence Algorithm and Database.")
+        Speech("I have access to all of the internet and also having access to the gpt3 ai model.")    
+    
     def query_gpt3(self, input_text):
         try:
             openai.api_key = self.api_key
@@ -48,7 +59,8 @@ class VoiceInteractionHandler:
 
         except FileNotFoundError:
             self.knowledge_base = {}
-    def start_listening(self,count):
+            
+    def start_listening(self):
         
         if not self.is_listening:
             self.is_listening = True
@@ -79,37 +91,45 @@ class VoiceInteractionHandler:
             self.exit()
             
     def listen(self):
-        Speech("Hello! I AM ALIAB which stands for Ai with learning intelligence Algorithm and Database.")
-        Speech("I have access to all of the internet and also having access to the gpt3 ai model.")
         while True:
             try:
                 Speech("what can i do for you today")
                 user_input = voice().lower()
                 print("You: " + user_input)
-                self.runloop(user_input)
+                if 'exit' in user_input:
+                    break
+                    
+                else:
+                    self.runloop(user_input)
                     
             except AttributeError:
                 pass
             except Exception as e:
                 Speech("An error occurred. Please try again.")
                 Speech(e)
+        
+        if 'exit' in user_input:
+                    self.exit()
+        
     def runloop(self,user_input):
         try:
-                if 'exit' in user_input:
-                    self.exit()
 
                 if user_input in self.knowledge_base:
-                    Speech(self.knowledge_base[user_input])
+                    Speech(self.knowledge_base[user_input],self.voice_id,self.speed)
                     print("ALIAB: ", self.knowledge_base[user_input])
                 elif user_input.startswith("tell me about "):
                     topic = user_input.replace("tell me about ","")
                     Speech("searching on wikipedia")
 
                     response = self.search_wikipedia(topic)
-                    Speech(response)
                     print("ALIAB: ", response)
+                    Speech(response)
                     Speech("did i answer the question correctly ?")
-                    user_feedback = voice().lower()
+                    user_feedback = voice()
+                    if user_feedback==None:
+                        user_feedback=="yes"
+                    else:
+                        user_feedback.lower()
                     if user_feedback == 'no':
                         Speech("enter correct response")
                         user_feedback = input("enter correct response")
@@ -118,8 +138,8 @@ class VoiceInteractionHandler:
                         self.train(user_input, response)
                 else:
                     response = self.query_gpt3(f"User: {user_input}\nAI:")
-                    Speech(response)
                     print("ALIAB: ", response)
+                    Speech(response)
                     user_feedback = voice()
                     if user_feedback==None:
                         user_feedback=="yes"
@@ -140,5 +160,6 @@ class VoiceInteractionHandler:
         self.is_listening = False
         self.callback_process.terminate()
     def exit(self):
-        self.stop_listening()
-        exit(Speech('goodbye'))
+        from ALIAB import VoiceBotGUI as ui
+        ui.stop_voice_interaction(ui)
+        

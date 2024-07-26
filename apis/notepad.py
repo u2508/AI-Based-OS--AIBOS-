@@ -1,20 +1,35 @@
-from PyQt5.QtGui import QFontDatabase
+from PyQt5.QtGui import QFontDatabase,QFont,QImage,QPixmap,QPalette,QBrush,QPainter,QColor
 from PyQt5.QtWidgets import (
-    QMainWindow, QApplication, QFileDialog, QMessageBox,
-    QToolBar, QPlainTextEdit, QVBoxLayout, QWidget, QAction,
-    QStatusBar, QStyleFactory)
+    QMainWindow, QApplication, QFileDialog, QMessageBox,QHBoxLayout,QSpacerItem,
+    QToolBar, QPlainTextEdit, QVBoxLayout, QWidget, QPushButton,QStatusBar, QStyleFactory)
+from PyQt5.QtCore import Qt
 from PyQt5.QtPrintSupport import QPrintDialog
 import sys,os
-
+class WatermarkPlainTextEdit(QPlainTextEdit):
+    def __init__(self, parent=None):
+        super(WatermarkPlainTextEdit, self).__init__(parent)
+        #self.setReadOnly(True)
+        #self.setAttribute(Qt.WA_TranslucentBackground)
+    def paintEvent(self, event):
+        painter = QPainter(self.viewport())
+        ironman_image = QPixmap('iron-man1.jpg').scaled(self.size(), Qt.KeepAspectRatioByExpanding, Qt.SmoothTransformation)
+        painter.drawPixmap(0, 0, ironman_image)
+        
+        super(WatermarkPlainTextEdit, self).paintEvent(event)
+    def hidden(self):
+        if self.isHidden():
+            self.show()
+        else:
+            self.hide()
 class MainWindow(QMainWindow):
     def __init__(self, *args, **kwargs):
         super(MainWindow, self).__init__(*args, **kwargs)
-        self.setGeometry(100, 100, 800, 600)
+        self.setGeometry(100, 20, 600, 600)
         self.path = None
-
+        self.setWindowFlags(Qt.FramelessWindowHint)
         # Create the editor
         layout = QVBoxLayout()
-        self.editor = QPlainTextEdit()
+        self.editor = WatermarkPlainTextEdit()
         fixed_font = QFontDatabase.systemFont(QFontDatabase.FixedFont)
         fixed_font.setPointSize(12)
         self.editor.setFont(fixed_font)
@@ -22,7 +37,6 @@ class MainWindow(QMainWindow):
         container = QWidget()
         container.setLayout(layout)
         self.setCentralWidget(container)
-
         # Create status bar
         self.status = QStatusBar()
         self.setStatusBar(self.status)
@@ -33,52 +47,78 @@ class MainWindow(QMainWindow):
 
         # Create edit toolbar
         edit_toolbar = QToolBar("Edit")
-        self.addToolBar(edit_toolbar)
+        edit_toolbar.setOrientation(Qt.Vertical) 
+        self.addToolBar(Qt.LeftToolBarArea, edit_toolbar)
 
         # Create actions
         self.create_actions(file_toolbar, edit_toolbar)
 
         # Call update title method
         self.update_title()
-
+        
+        self.setStyleSheet(open('note_style.css').read())
         # Set Fusion style for a modern look
         QApplication.setStyle(QStyleFactory.create("Fusion"))
-
-
+        
+    
     def create_actions(self, file_toolbar, edit_toolbar):
         """
         Create actions and add them to the specified toolbars.
         """
-        # File Actions
-        self.create_action(file_toolbar, "Open file", self.file_open)
-        self.create_action(file_toolbar, "Save", self.file_save)
-        self.create_action(file_toolbar, "Save As", self.file_saveas)
-        self.create_action(file_toolbar, "Print", self.file_print)
-        self.create_action(file_toolbar, "Close file", self.file_close)
-        self.create_action(file_toolbar, "Close APP", self.call)
-        
-        
-
+        container_widget = QWidget()
+        container_layout = QHBoxLayout(container_widget)
+        spacer = QSpacerItem(100, 50) 
+        self.create_action(container_layout, "Open file", self.file_open,True)
+          # Adjust the width and height of the spacer as needed
+        # Adjust the width and height of the spacer as needed
+        container_layout.addSpacerItem(spacer)
+        self.create_action(container_layout, "Save As", self.file_saveas,True)
+        container_layout.addSpacerItem(spacer)
+        self.create_action(container_layout, "Print", self.file_print,True) 
+        container_layout.addSpacerItem(spacer)
+        self.create_action(container_layout, "Close", exit,True)
+        container_layout.addSpacerItem(spacer)
+        self.create_action(container_layout, "Close APP", self.call)
+        container_layout.addSpacerItem(spacer)
+        file_toolbar.addWidget(container_widget)
         # Edit Actions
-        self.create_action(edit_toolbar, "Undo", self.editor.undo)
-        self.create_action(edit_toolbar, "Redo", self.editor.redo)
-        self.create_action(edit_toolbar, "Cut", self.editor.cut)
-        self.create_action(edit_toolbar, "Copy", self.editor.copy)
-        self.create_action(edit_toolbar, "Paste", self.editor.paste)
-        self.create_action(edit_toolbar, "Select all", self.editor.selectAll)
-
+        
+        container_widget1 = QWidget()
+        container_layout1 = QVBoxLayout(container_widget1) 
+        self.create_action(container_layout1, "Undo", self.editor.undo)
+        container_layout1.addSpacerItem(spacer)
+        self.create_action(container_layout1, "Redo", self.editor.redo)
+        container_layout1.addSpacerItem(spacer)
+        self.create_action(container_layout1, "Cut", self.editor.cut,False)
+        container_layout1.addSpacerItem(spacer)
+        self.create_action(container_layout1, "Copy", self.editor.copy,False)
+        container_layout1.addSpacerItem(spacer)
+        self.create_action(container_layout1, "Paste", self.editor.paste,False)
+        container_layout1.addSpacerItem(spacer)
+        self.create_action(container_layout1, "Select all", self.editor.selectAll,False)
+        container_layout1.addSpacerItem(spacer)
+        edit_toolbar.addWidget(container_widget1)
         # Wrap text action
-        self.wrap_action = self.create_action(edit_toolbar, "Wrap text to window", self.edit_toggle_wrap)
+        self.wrap_action = self.create_action(container_layout, "Wrap text to window", self.edit_toggle_wrap)
         self.wrap_action.setCheckable(True)
         self.wrap_action.setChecked(True)
 
-    def create_action(self, toolbar, text, slot):
+    def create_action(self, toolbar, text, slot,font_flag=False):
         """
         Create an action and add it to the specified toolbar, and connect it to the specified slot.
         """
-        action = QAction(text, self)
-        action.triggered.connect(slot)
-        toolbar.addAction(action)
+        action = QPushButton(text, self)
+        
+        action.clicked.connect(slot)
+        
+        if font_flag==True:
+            action.setFont(QFont("Century Schoolbook",25))
+        else:
+            action.setFont(QFont("arial",20))
+        action.clicked.connect(slot)
+        
+        toolbar.addWidget(action)
+
         return action
 
     def dialog_critical(self, s):
@@ -119,7 +159,7 @@ class MainWindow(QMainWindow):
         self.status.showMessage(f"Saved: {self.path}")
 
     def file_saveas(self):
-        path, _ = QFileDialog.getSaveFileName(self, "Save file", "", "PDF files (*.pdf);;DOCX files (*.docx);;DOC files (*.doc);;All files (*)")
+        path, _ = QFileDialog.getSaveFileName(self, "Save file", "", "text files (*.txt);;DOCX files (*.docx);;DOC files (*.doc);;All files (*)")
         if not path:
             return
         self._save_to_path(path)
@@ -169,11 +209,12 @@ class MainWindow(QMainWindow):
             if __name__ == '__main__':
                 exit()
             else:
+                print('bt')
+                self.editor.hidden()
                 self.hide()
 if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    app.setApplicationName("PyQt5-Note")
+    app1 = QApplication(sys.argv)
+    app1.setApplicationName("PyQt5-Note")
     window = MainWindow()
     window.call()
-
-    sys.exit(app.exec_())
+    sys.exit(app1.exec_())

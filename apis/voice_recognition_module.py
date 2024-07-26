@@ -4,13 +4,13 @@ speak = sr.Recognizer()
 engine = pyttsx3.init('sapi5')
 voices = engine.getProperty('voices')
 voice_id = "HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Speech\Voices\Tokens\TTS_MS_EN-US_ZIRA_11.0"
-engine.setProperty('rate', 125)
-# Use female voice
-engine.setProperty('voice', voice_id)
-def Speech(audio):
-    engine.say(audio)
-    if not engine._inLoop:
-    	engine.runAndWait()
+def Speech(audio,voice_type=voice_id, speed=125):
+    
+	engine.setProperty('rate', speed)
+	# Use given voice
+	engine.setProperty('voice', voice_type)
+	engine.say(audio)
+	engine.runAndWait()
     
 def voice ():
 		

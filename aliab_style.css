@@ -1,0 +1,121 @@
+/* Global Styles */
+QWidget {
+    background-color: #050505; /* Dark background color */
+    color: #ffffff; /* Text color */
+}
+
+QLabel {
+    font-size: 24px; /* Set font size for labels */
+}
+
+QPushButton {
+    font-size: 18px; /* Set font size for buttons */
+    border-radius: 8px; /* Add rounded corners to buttons */
+    padding: 10px 15px; /* Add padding to buttons */
+    margin: 10px; /* Add margin to buttons */
+    border: 2px solid #ffffff; /* White border for buttons */
+    color: #ffffff; /* Text color for buttons */
+}
+
+QPushButton:hover {
+    background-color: #333333; /* Darker background color on hover */
+}
+
+QPushButton:pressed {
+    background-color: #555555; /* Slightly lighter background color when pressed */
+}
+
+QLineEdit {
+    font-size: 18px; /* Set font size for input fields */
+    background-color: #080808; /* Dark background color for input fields */
+    color: #ffffff; /* Text color for input fields */
+    border: 2px solid #666666; /* Border color for input fields */
+    border-radius: 8px; /* Add rounded corners to input fields */
+    padding: 8px; /* Add padding to input fields */
+}
+
+/* Voice Bot GUI Specific Styles */
+VoiceBotGUI {
+    background-color: #050505; /* Dark background color */
+}
+
+start_button {
+    background-color: #00ff00; /* Green color for start button */
+    color: #000000; /* Text color for start button */
+}
+
+stop_button {
+    background-color: #ff0000; /* Red color for stop button */
+    color: #000000; /* Text color for stop button */
+}
+
+QFrame[history_text] {
+    background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent dark background for interaction history */
+    color: #ffffff; /* Text color for interaction history */
+}
+
+QLabel[feedback_label] {
+    font-size: 24px; /* Set font size for feedback label */
+    color: #ffffff; /* Text color for feedback label */
+}
+
+QLabel[options], QLabel[history] {
+    font-size: 28px; /* Set font size for options and history labels */
+    color: #ff4500; /* Orange-red color for options and history labels */
+}
+
+/* Adjacent Button Styles */
+QPushButton.notes_button {
+    background: #ff6600;
+}
+
+QPushButton.news_button {
+    background: linear-gradient(#3366ff, #0033cc);
+}
+
+QPushButton.keyboard_button {
+    background: linear-gradient(#00cc66, #00994d);
+}
+
+QPushButton.weather_button {
+    background: linear-gradient(#ffcc00, #e69500);
+}
+
+QPushButton.applook_button {
+    background: linear-gradient(#cc66ff, #9933cc);
+}
+
+QPushButton.health_button {
+    background: linear-gradient(#ff6666, #ff3333);
+}
+
+QPushButton.exit_button {
+    background: linear-gradient(#666666, #333333);
+}
+
+QPushButton.education_button {
+    background: linear-gradient(#cc0066, #99004d);
+}
+
+/* Hover and Pressed States for Various Buttons */
+QPushButton.notes_button:hover,
+QPushButton.news_button:hover,
+QPushButton.keyboard_button:hover,
+QPushButton.weather_button:hover,
+QPushButton.applook_button:hover,
+QPushButton.health_button:hover,
+QPushButton.exit_button:hover,
+QPushButton.education_button:hover {
+    background-color: #303030;
+}
+
+QPushButton.notes_button:pressed,
+QPushButton.news_button:pressed,
+QPushButton.keyboard_button:pressed,
+QPushButton.weather_button:pressed,
+QPushButton.applook_button:pressed,
+QPushButton.health_button:pressed,
+QPushButton.exit_button:pressed,
+QPushButton.education_button:pressed {
+    background-color: #404040;
+}
