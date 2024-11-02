@@ -56,7 +56,7 @@ class WeatherApp(QWidget):
 
     def fetch_weather(self):
         city_name = self.city_textbox.text().strip()
-        api_key = '05846eeec57114c0fa3712580edc90fd'
+        api_key = '0eda083fd1bffbbfa30e3946e54ed9a2'
         # Replace with your actual API key
 
         weather_info = self.get_weather(city_name, api_key)
